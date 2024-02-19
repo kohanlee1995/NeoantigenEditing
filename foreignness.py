@@ -17,6 +17,7 @@ class Foreignness():
             prepare_blastdb(foreign_file)
         self.db_file = foreign_file
         self.epitopes = load_epitopes(foreign_file)
+        self.blosum62 = load_blosum62_mat()
     
     def __call__(self, peptides, a=22.897590714815188, k=1):
         result_dict = dict()
@@ -24,7 +25,7 @@ class Foreignness():
         alignments = run_blastp(peptides, self.db_file, n=100)
         # compute foreignness
         for pept, epitope_ids in alignments.items():
-            scores = [align_peptides(pept, self.epitopes[i], blosum62).score for i in epitope_ids] # alignment score
+            scores = [align_peptides(pept, self.epitopes[i], self.blosum62).score for i in epitope_ids] # alignment score
             foreignness = compute_R(scores, a, k) # foreignness
             result_dict[pept] = foreignness
         
