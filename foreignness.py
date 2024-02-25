@@ -22,7 +22,8 @@ class Foreignness():
     def __call__(self, peptides, a=22.897590714815188, k=1):
         result_dict = dict()
         # run BLAST
-        alignments = run_blastp(peptides, self.db_file, n=100)
+        filtered_peptides = [pept for pept in peptides if len(pept)>0]
+        alignments = run_blastp(filtered_peptides, self.db_file, n=100)
         # compute foreignness
         for pept, epitope_ids in alignments.items():
             scores = [align_peptides(pept, self.epitopes[i], self.blosum62).score for i in epitope_ids] # alignment score
